@@ -22,7 +22,7 @@ pat (for routing)
 		POST todos
 * UPDATE BY ID, example id is 12 and it will return the json for new todo
 
-		POST todos/
+		PUT todos/12
 * DELETE BY ID, example id is 12
 
-		POST todos/delete/12
+		DELETE todos/12
