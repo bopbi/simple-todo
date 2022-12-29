@@ -45,3 +45,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+
+      - uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.IMAGE }}
+          format: cyclonedx-json
+          artifact-name: sbom.cyclonedx.json
+          output-file: /tmp/sbom.cyclonedx.json
+        env:
+          IMAGE: ghcr.io/migmartri/simple-todo:${{ github.ref_name }}
