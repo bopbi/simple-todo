@@ -1,0 +1,33 @@
+project_name: todo-app
+env:
+  - CGO_ENABLED=0
+
+builds:
+  - binary: server
+    id: server
+    targets:
+      - linux_amd64
+
+signs:
+  # COSIGN_PASSWORD is also required to be present
+  - cmd: cosign
+    args:
+      [
+        "sign-blob",
+        "--key=env://COSIGN_PRIVATE_KEY",
+        "--output-signature=${signature}",
+        "${artifact}",
+      ]
+    artifacts: all
+
+docker_signs:
+  - cmd: cosign
+    args: ["sign", "--key=env://COSIGN_PRIVATE_KEY", "${artifact}"]
+    artifacts: all
+
+dockers:
+  - dockerfile: Dockerfile.goreleaser
+    ids:
+      - server
+    image_templates:
+      - "ghcr.io/migmartri/simple-todo:{{ .Tag }}"

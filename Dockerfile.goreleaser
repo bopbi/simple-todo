@@ -1,0 +1,8 @@
+FROM golang:1.18 AS builder
+
+FROM scratch
+
+COPY ./server /
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+ENTRYPOINT [ "/server" ]
