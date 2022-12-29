@@ -22,12 +22,7 @@ signs:
 
 docker_signs:
   - cmd: cosign
-    args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
-      [
-        "sign",
-        "--key=env://COSIGN_PRIVATE_KEY",
-        "${artifact}",
-      ]
+    args: ["sign", "--key=env://COSIGN_PRIVATE_KEY", "${artifact}"]
     artifacts: all
 
 dockers:
