@@ -1,4 +1,4 @@
-project_name: TODO APP
+project_name: todo-app
 env:
   - CGO_ENABLED=0
 
@@ -9,12 +9,12 @@ builds:
       - linux_amd64
 
 signs:
+  # COSIGN_PASSWORD is also required to be present
   - cmd: cosign
-    stdin: "{{ .Env.COSIGN_PASSWORD }}"
     args:
       [
         "sign-blob",
-        "--key=/tmp/cosign.key",
+        "--key=env://COSIGN_PRIVATE_KEY",
         "--output-signature=${signature}",
         "${artifact}",
       ]
@@ -22,12 +22,16 @@ signs:
 
 docker_signs:
   - cmd: cosign
-    stdin: "{{ .Env.COSIGN_PASSWORD }}"
     args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
+      [
+        "sign",
+        "--key=env://COSIGN_PRIVATE_KEY",
+        "${artifact}",
+      ]
     artifacts: all
 
 dockers:
-  - dockerfile: Dockerfile
+  - dockerfile: Dockerfile.goreleaser
     ids:
       - server
     image_templates:
