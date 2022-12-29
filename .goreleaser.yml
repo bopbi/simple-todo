@@ -1,0 +1,34 @@
+project_name: TODO APP
+env:
+  - CGO_ENABLED=0
+
+builds:
+  - binary: server
+    id: server
+    targets:
+      - linux_amd64
+
+signs:
+  - cmd: cosign
+    stdin: "{{ .Env.COSIGN_PASSWORD }}"
+    args:
+      [
+        "sign-blob",
+        "--key=/tmp/cosign.key",
+        "--output-signature=${signature}",
+        "${artifact}",
+      ]
+    artifacts: all
+
+docker_signs:
+  - cmd: cosign
+    stdin: "{{ .Env.COSIGN_PASSWORD }}"
+    args: ["sign", "--key=/tmp/cosign.key", "${artifact}"]
+    artifacts: all
+
+dockers:
+  - dockerfile: Dockerfile
+    ids:
+      - server
+    image_templates:
+      - "ghcr.io/migmartri/simple-todo-app:{{ .Tag }}"
