@@ -30,4 +30,4 @@ dockers:
     ids:
       - server
     image_templates:
-      - "ghcr.io/migmartri/simple-todo-app:{{ .Tag }}"
+      - "ghcr.io/migmartri/simple-todo:{{ .Tag }}"
