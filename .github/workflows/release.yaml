@@ -17,10 +17,19 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@v2.5.0
 
+      - name: Install Chainloop
+        run: |
+          curl -sfL https://chainloop.dev/install.sh | bash -s -- --version v${{ env.CHAINLOOP_VERSION }}
+          sudo install chainloop /usr/local/bin
+          chainloop version
+
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Initialize Attestation
+        run: chainloop attestation init --contract-revision 1
 
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -54,3 +63,25 @@ jobs:
           output-file: /tmp/sbom.cyclonedx.json
         env:
           IMAGE: ghcr.io/migmartri/simple-todo:${{ github.ref_name }}
+
+      - name: Finish and Record Attestation
+        if: ${{ success() }}
+        run: |
+          chainloop attestation status --full
+          chainloop attestation push --key env://CHAINLOOP_SIGNING_KEY
+        env:
+          CHAINLOOP_SIGNING_KEY: ${{ secrets.COSIGN_PRIVATE_KEY }}
+          CHAINLOOP_SIGNING_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
+      - name: Mark attestation as failed
+        if: ${{ failure() }}
+        run: |
+          chainloop attestation reset
+
+      - name: Mark attestation as cancelled
+        if: ${{ cancelled() }}
+        run: |
+          chainloop attestation reset --trigger cancellation
+    env:
+      CHAINLOOP_VERSION: 0.8.58
+      CHAINLOOP_ROBOT_ACCOUNT: ${{ secrets.CHAINLOOP_ROBOT_ACCOUNT }}
