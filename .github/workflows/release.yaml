@@ -82,7 +82,6 @@ jobs:
         if: ${{ cancelled() }}
         run: |
           chainloop attestation reset --trigger cancellation
-
-  env:
-    CHAINLOOP_VERSION: 0.8.58
-    CHAINLOOP_ROBOT_ACCOUNT: ${{ secrets.CHAINLOOP_ROBOT_ACCOUNT }}
+    env:
+      CHAINLOOP_VERSION: 0.8.58
+      CHAINLOOP_ROBOT_ACCOUNT: ${{ secrets.CHAINLOOP_ROBOT_ACCOUNT }}
