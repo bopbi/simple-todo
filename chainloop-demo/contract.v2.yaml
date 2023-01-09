@@ -1,0 +1,15 @@
+schemaVersion: v1
+
+materials:
+  - type: CONTAINER_IMAGE
+    name: image
+    output: true
+
+  - type: ARTIFACT
+    name: binary
+
+  - type: SBOM_CYCLONEDX_JSON
+    name: sbom
+
+runner:
+  type: "GITHUB_ACTION"
