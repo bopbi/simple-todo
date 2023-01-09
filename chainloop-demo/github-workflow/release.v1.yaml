@@ -29,7 +29,7 @@ jobs:
           fetch-depth: 0
 
       - name: Initialize Attestation
-        run: chainloop attestation init --contract-revision 2
+        run: chainloop attestation init --contract-revision 1
 
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -63,18 +63,6 @@ jobs:
           output-file: /tmp/sbom.cyclonedx.json
         env:
           IMAGE: ghcr.io/migmartri/simple-todo:${{ github.ref_name }}
-
-      - name: Add Container Image Artifact
-        run: chainloop attestation add --name image --value ghcr.io/migmartri/simple-todo:${{ github.ref_name }}
-
-      - name: Add SBOM Artifact
-        run: chainloop attestation add --name sbom --value /tmp/sbom.cyclonedx.json
-
-      - name: Add Binary Artifact
-        run: |
-          BINARY_PATH="$(echo -n '${{ steps.release.outputs.metadata }}' | jq -r '"dist/" + .project_name + "_" + .version + "_" + .runtime.goos + "_" + .runtime.goarch + ".tar.gz"')"
-
-          chainloop attestation add --name binary --value ${BINARY_PATH}
 
       - name: Finish and Record Attestation
         if: ${{ success() }}
