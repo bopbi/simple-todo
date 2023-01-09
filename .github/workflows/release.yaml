@@ -73,7 +73,9 @@ jobs:
       - name: Add Binary Artifact
         run: |
           PATH=$(echo -n '${{ steps.release.outputs.metadata }}' | jq -r '"dist/" + .project_name + "_" + .version + "_" + .runtime.goos + "_" + .runtime.goarch + ".tar.gz"')
-          chainloop attestation add --name binary --value $PATH
+
+          echo $PATH
+          chainloop attestation add --name binary --value ${PATH}
 
       - name: Finish and Record Attestation
         if: ${{ success() }}
